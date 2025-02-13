@@ -15,8 +15,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium_stealth import stealth
 
-
-
 from config import settings
 from database import OrderDAO
 
@@ -42,9 +40,9 @@ def get_projects(last_links):
     chrome_options.add_argument("--headless")
     # Инициализация ChromeDriver с опциями
     driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
-    ua = get_random_chrome_user_agent()
+    ua = UserAgent(browsers='chrome', os='windows', platforms='pc')#.random
     stealth(driver=driver,
-            user_agent=ua,
+            user_agent=ua.random,
             languages=["ru-RU", "ru"],
             vendor="Google Inc.",
             platform="Win32",
@@ -87,9 +85,7 @@ def get_projects(last_links):
 
     return projects
 
-def get_random_chrome_user_agent():
-    user_agent = UserAgent(browsers='chrome', os='windows', platforms='pc')
-    return user_agent.random
+
 
 async def work():
     # берет из базы данных 5 последних проектов

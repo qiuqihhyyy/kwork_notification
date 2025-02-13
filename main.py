@@ -11,6 +11,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.storage.memory import MemoryStorage
 import logging
 import psutil
+import random
 
 
 from config import settings
@@ -26,7 +27,7 @@ def repeat(coro, loop):
 
     asyncio.ensure_future(coro(), loop=loop)
     # выполнение coro раз в минуту бесконечно долго
-    loop.call_later(60, repeat, coro, loop)
+    loop.call_later(random.randint(30, 90), repeat, coro, loop)
 
 # главная функция
 async def main():
