@@ -10,6 +10,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.storage.memory import MemoryStorage
 import logging
+import psutil
+
 
 from config import settings
 from database import OrderDAO
@@ -21,6 +23,7 @@ logger = logging.getLogger(__name__)
 # функция цикличного повторения
 def repeat(coro, loop):
     # я не знаю для чего это
+
     asyncio.ensure_future(coro(), loop=loop)
     # выполнение coro раз в минуту бесконечно долго
     loop.call_later(60, repeat, coro, loop)

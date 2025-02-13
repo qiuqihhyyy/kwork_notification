@@ -1,5 +1,6 @@
 import time
 
+import psutil
 import requests, re
 from aiogram import Bot
 
@@ -47,9 +48,10 @@ def get_projects(last_links):
     soup = BeautifulSoup(html, 'lxml')
     # сохранение всех карточек заказов
     items = soup.find_all('div', class_='want-card want-card--list want-card--hover')
+
     for item in items:
         # заголовок
-        title = item.find('h1', class_="wants-card__header-title breakwords pr250")
+        title = item.find('h1')
         title = title.text if title else "Error title"
         # цена
         price = item.find("div", class_='wants-card__price').find('div', class_='d-inline')
@@ -66,6 +68,7 @@ def get_projects(last_links):
             break
         params = {"title": title,"price":price,"link":link}
         projects.append(params)
+    #driver.quit()
 
     return projects
 
@@ -79,7 +82,6 @@ async def work():
     projects = get_projects(last_links_projects)
     # переворот списка чтобы последними в базе данных были самые новые проекты
     projects.reverse()
-
     if projects:
         for project in projects:
             await OrderDAO.add(title=project['title'], price=project['price'], link=project['link'])
@@ -87,3 +89,5 @@ async def work():
             await bot.send_message(chat_id=settings.get_admin_id(),
                                    text=f"{project['title']}\nЦена:{project['price']}\nСсылка:{project['link']}",
                                    )
+
+    return None
