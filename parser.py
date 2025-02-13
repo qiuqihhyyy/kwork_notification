@@ -10,6 +10,10 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from fake_useragent import UserAgent
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium_stealth import stealth
 
 
 
@@ -34,10 +38,21 @@ def get_projects(last_links):
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument("--disable-notifications")
     chrome_options.add_argument("--disable-popup-blocking")
-    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--no-sandbox')  # cвязано с проблемой dir-user
     chrome_options.add_argument("--headless")
     # Инициализация ChromeDriver с опциями
     driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+    ua = get_random_chrome_user_agent()
+    stealth(driver=driver,
+            user_agent=ua,
+            languages=["ru-RU", "ru"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True,
+            run_on_insecure_origins=True
+            )
     # get запрос
     driver.get('https://kwork.ru/projects?fc=41')
     # ожидание загрузки
@@ -72,6 +87,9 @@ def get_projects(last_links):
 
     return projects
 
+def get_random_chrome_user_agent():
+    user_agent = UserAgent(browsers='chrome', os='windows', platforms='pc')
+    return user_agent.random
 
 async def work():
     # берет из базы данных 5 последних проектов
